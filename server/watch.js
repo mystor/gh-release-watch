@@ -127,5 +127,25 @@ Meteor.methods({
         'profile.watching': Repo.removeByFullName(full_name)
       }
     });
+  },
+
+  unwatchAll: function() {
+    if (!this.userId)
+      throw new Meteor.Error(403, 'Must be logged in to unwatch a repository');
+
+    // Drop references
+    var user = Meteor.users.findOne({ _id: this.userId });
+    user.profile.watching.forEach(function(repo) {
+      Repo.removeByFullName(repo);
+    });
+
+    // Update the user
+    Meteor.users.update({
+      _id: this.userId
+    }, {
+      $set: {
+        'profile.watching': []
+      }
+    });
   }
 });

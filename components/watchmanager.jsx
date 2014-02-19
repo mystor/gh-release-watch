@@ -41,6 +41,15 @@ function unwatch(repo) {
   }
 }
 
+function unwatchAll(e) {
+  Meteor.call('unwatchAll', function(err) {
+    if (err)
+      error(err);
+  });
+
+  e.preventDefault();
+}
+
 var AddWatchForm = React.createClass({
   // Parameters:
   // -- none --
@@ -216,6 +225,12 @@ WatchManager = React.createClass({
 
         <hr />
 
+        <small className="pull-right" style={{'margin-right': '10px'}}>
+          <a href="javascript:void(0)"
+            onClick={unwatchAll}>
+            Unwatch All
+          </a>
+        </small>
         <h5>Manage Current Watches</h5>
         <WatchList
           watching={this.props.watching} 
