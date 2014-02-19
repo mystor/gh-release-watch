@@ -1,9 +1,6 @@
 {
   "packages": {
-    "page-js-ie-support": {},
-    "HTML5-History-API": {},
-    "fast-render": {},
-    "bootstrap-3": {},
-    "handlebars-server": {}
+    "routecore": "0.0.1",
+    "bootstrap-3": "3.1.0-1"
   }
 }

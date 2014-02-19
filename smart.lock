@@ -2,13 +2,24 @@
   "meteor": {},
   "dependencies": {
     "basePackages": {
-      "page-js-ie-support": {},
-      "HTML5-History-API": {},
-      "fast-render": {},
-      "bootstrap-3": {},
-      "handlebars-server": {}
+      "routecore": {
+        "version": "0.0.1"
+      },
+      "bootstrap-3": {
+        "version": "3.1.0-1"
+      }
     },
     "packages": {
+      "routecore": {
+        "git": "https://github.com/mystor/meteor-routecore.git",
+        "tag": "v0.0.1",
+        "commit": "4c0e91828ff586f554d460c81aa3fe7b91c351aa"
+      },
+      "bootstrap-3": {
+        "git": "https://github.com/mangasocial/meteor-bootstrap-3.git",
+        "tag": "v3.1.0-1",
+        "commit": "329dccb08bfc18c635676dea600ac9953162cda9"
+      },
       "page-js-ie-support": {
         "git": "https://github.com/tmeasday/meteor-page-js-ie-support.git",
         "tag": "v1.3.5",
@@ -23,16 +34,6 @@
         "git": "https://github.com/arunoda/meteor-fast-render.git",
         "tag": "v0.1.15",
         "commit": "baf79a3e5863acc3abfe2d0d62fb23b21fe880de"
-      },
-      "bootstrap-3": {
-        "git": "https://github.com/mangasocial/meteor-bootstrap-3.git",
-        "tag": "v3.1.0-1",
-        "commit": "329dccb08bfc18c635676dea600ac9953162cda9"
-      },
-      "handlebars-server": {
-        "git": "https://github.com/EventedMind/meteor-handlebars-server.git",
-        "tag": "v1.1.0",
-        "commit": "ed99c8e9280894519f44a5b4c84f66ff596c5450"
       }
     }
   }
