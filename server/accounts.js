@@ -56,7 +56,26 @@ Accounts.onCreateUser(function (options, user) {
   }
 });
 
+// Prevent users from directly modifying their profile field
+// instead, they should use methods to do so
+Meteor.users.deny({ update: function() { return true; } });
+
 Meteor.methods({
+  updateEmail: function(newEmail) {
+    check(newEmail, String);
+
+    if (!this.userId)
+      throw new Meteor.Error(403, 'Must be logged in to change email');
+
+    // It should look like an email (one @ sign)
+    if (newEmail.split('@').length !== 2)
+      throw new Meteor.Error(400, 'Must enter an email');
+
+    Meteor.users.update({ _id: this.userId }, {
+      $set: { 'profile.email': newEmail }
+    });
+  },
+
   unsubscribe: function(token) {
     check(token, String);
 

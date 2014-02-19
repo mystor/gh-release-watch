@@ -30,7 +30,10 @@ Repo = {
       Repo.refer(doc._id);
     } else {
       // Search for the repository
-      var url = 'https://api.github.com/repos/' + full_name;
+      var path = full_name.split('/').map(function (c) {
+        return encodeURIComponent(c);
+      }).join('/');
+      var url = 'https://api.github.com/repos/' + path;
       try {
         var result = Meteor.http.get(url, {
           params: {
@@ -86,6 +89,9 @@ Meteor.methods({
     if (!this.userId)
       throw new Meteor.Error(403, 'Must be logged in to watch a repository');
 
+    if (full_name.split('/').length !== 2)
+      throw new Meteor.Error(400, 'Invalid repository name');
+
     var user = Meteor.users.findOne({_id: this.userId});
     // Ensure that the user isn't already following
     if (user.profile.watching.indexOf(full_name) !== -1)
@@ -105,6 +111,9 @@ Meteor.methods({
 
     if (!this.userId)
       throw new Meteor.Error(403, 'Must be logged in to unwatch a repository');
+
+    if (full_name.split('/').length !== 2)
+      throw new Meteor.Error(400, 'Invalid repository name');
 
     var user = Meteor.users.findOne({ _id: this.userId });
 

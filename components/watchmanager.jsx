@@ -140,15 +140,32 @@ var EmailDisplay = React.createClass({
 
   startEditing: function(e) {
     e.preventDefault();
-    this.setState({editing: true});
+    this.setState({
+      editing: true,
+      email: this.props.user.profile.email,
+      valid: true
+    });
+  },
+
+  type: function(e) {
+    var newEmail = e.target.value;
+    var valid = newEmail.split('@').length === 2
+    this.setState({
+      email: newEmail,
+      valid: valid
+    });
   },
 
   stopEditing: function(e) {
     e.preventDefault();
+    if (!this.state.valid)
+      return;
+
     var textbox = document.getElementById('email-address');
     var newEmail = textbox.value;
-    Meteor.users.update({ _id: Meteor.userId() }, {
-      $set: { 'profile.email': newEmail }
+    Meteor.call('updateEmail', newEmail, function(err) {
+      if (err)
+        error(err);
     });
     this.setState({editing: false});
   },
@@ -160,14 +177,18 @@ var EmailDisplay = React.createClass({
 
     if (this.state.editing)
       return (
-        <form onSubmit={this.stopEditing}>
+        <form onSubmit={this.stopEditing}
+          className={this.state.valid ? 'has-success' : 'has-error'}>
           <div className="input-group">
             <input type="text" 
               id="email-address"
-              className="form-control" 
-              defaultValue={user.profile.email} />
+              className="form-control"
+              value={this.state.email}
+              onChange={this.type} />
             <span className="input-group-btn">
-              <button className="btn btn-default" type="submit">
+              <button type="submit"
+                className={'btn ' + (this.state.valid ? 'btn-success' : 'btn-danger')}
+                disabled={!this.state.valid}>
                 Save
               </button>
             </span>
