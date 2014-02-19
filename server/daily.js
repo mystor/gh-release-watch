@@ -1,37 +1,53 @@
 function checkTags(repo) {
-  var result = Meteor.http.get(repo.tags_url, {
-    params: {
-      client_id: Config.gh_client_id,
-      client_secret: Config.gh_client_secret
-    },
-    headers: { 'User-Agent': 'gh-release-watch' }
-  });
-
-  if (result.error)
-    throw result.error
-
-  var tag_names = result.data.map(function(tag) {
-    return tag.name;
-  });
-
   var new_tags = [];
 
-  if (!repo.fresh) {
-    new_tags = tag_names.filter(function(tag) {
-      return repo.tags.indexOf(tag) === -1
-    });
-  }
+  console.log('# Checking Tags for ' + repo.full_name);
 
-  Repos.update({ _id: repo._id }, {
-    $set: {
-      fresh: false,
-      tags: tag_names
+  var headers = { 'User-Agent': 'gh-release-watch' };
+  if (repo.ETag)
+    headers['If-None-Match'] = repo.ETag;
+  try {
+    var result = Meteor.http.get(repo.tags_url, {
+      params: {
+        client_id: Config.gh_client_id,
+        client_secret: Config.gh_client_secret
+      },
+      headers: headers
+    });
+
+    if (result.statusCode === 304) {
+      console.log('-> 304 Not Modified');
+      return []; // The file hasn't changed since last time we looked at it
     }
-  });
+
+    var tag_names = result.data.map(function(tag) {
+      return tag.name;
+    });
+
+    if (!repo.fresh) {
+      new_tags = tag_names.filter(function(tag) {
+        return repo.tags.indexOf(tag) === -1
+      });
+    }
+
+    console.log('-> Found ' + new_tags.length + ' New Tags');
+
+    Repos.update({ _id: repo._id }, {
+      $set: {
+        fresh: false,
+        tags: tag_names,
+        ETag: result.headers.etag
+      }
+    });
+  } catch (err) {
+    console.warn('-> Error getting tags for ' + repo.full_name + '.');
+    console.warn(err);
+  }
   return new_tags;
 }
 
 function checkAllTags() {
+  console.log('!! Checking Tags');
   var repos = Repos.find();
   var newTags = {};
 
@@ -41,10 +57,13 @@ function checkAllTags() {
     });
   });
 
+  console.log('!! Done Checking Tags');
+
   return newTags;
 }
 
 function notifyUsers(newTags) {
+  console.log('!! Notifying Users');
   var users = Meteor.users.find();
 
   users.forEach(function(user) {
@@ -65,6 +84,7 @@ function notifyUsers(newTags) {
 
     var email = EmailGen.generate(report, user.unsubscribeToken);
 
+    console.log('-> Emailing ' + user.profile.email + ' - ' + email.subject);
     Email.send({
       to: user.profile.email,
       from: 'today@gh-release-watch.com',
@@ -73,6 +93,7 @@ function notifyUsers(newTags) {
       html: email.html
     });
   });
+  console.log('!! Done Notifying Users');
 }
 
 function checkAndNotify() {
