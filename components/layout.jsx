@@ -48,7 +48,14 @@ Layout = React.createClass({
             </div>
           </div>
         </div>
+
         <div className="container">
+          {Meteor.isClient && Session.get('error')
+            ? (<div className="alert alert-danger">
+                <strong>Error: </strong>
+                {' '}
+                {Session.get('error').reason}
+              </div>) : undefined}
           {this.props.children}
         </div>
 

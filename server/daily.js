@@ -79,7 +79,3 @@ function checkAndNotify() {
   notifyUsers(checkAllTags());
 }
 
-Meteor.startup(function() {
-  checkAndNotify();
-});
-

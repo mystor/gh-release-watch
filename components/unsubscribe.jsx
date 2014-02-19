@@ -3,12 +3,16 @@
 Unsubscribe = React.createClass({
   resubscribe: function(e) {
     var token = this.props.user.unsubscribeToken;
-    Meteor.call('resubscribe', token);
+    Meteor.call('resubscribe', token, function(err) {
+      error(err);
+    });
   },
 
   unsubscribe: function(e) {
     var token = this.props.user.unsubscribeToken;
-    Meteor.call('unsubscribe', token);
+    Meteor.call('unsubscribe', token, function(err) {
+      error(err);
+    });
   },
 
   render: function() {

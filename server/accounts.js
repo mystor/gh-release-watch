@@ -6,50 +6,54 @@ Accounts.onCreateUser(function (options, user) {
   var accessToken = user.services.github.accessToken;
 
   // Request more information from the server
-  var result = Meteor.http.get('https://api.github.com/user', {
-    params: {
-      access_token: accessToken
-    },
-    headers: { "User-Agent": "gh-release-watch" }
-  });
+  try {
+    var result = Meteor.http.get('https://api.github.com/user', {
+      params: {
+        access_token: accessToken
+      },
+      headers: { "User-Agent": "gh-release-watch" }
+    });
 
-  if (result.error)
-    throw result.error
+    // Limit the fields we want to store in the user's profile
+    profile = _.pick(result.data,
+      "login",
+      "email",
+      "url",
+      "html_url",
+      "starred_url");
+    profile.watching = [];
 
-  // Limit the fields we want to store in the user's profile
-  profile = _.pick(result.data,
-    "login",
-    "email",
-    "url",
-    "html_url",
-    "starred_url");
-  profile.watching = [];
+    // Get the repositories which the user is starring
+    var starredUrl = profile.starred_url.replace(/\{.*\}/g, '');
+    try {
+      result = Meteor.http.get(starredUrl, {
+        params: {
+          access_token: accessToken
+        },
+        headers: { 'User-Agent': 'gh-release-watch' }
+      });
 
-  // Get the repositories which the user is starring
-  var starredUrl = profile.starred_url.replace(/\{.*\}/g, '');
-  result = Meteor.http.get(starredUrl, {
-    params: {
-      access_token: accessToken
-    },
-    headers: { 'User-Agent': 'gh-release-watch' }
-  });
+      var starredRepos = result.data;
 
-  if (result.error)
-    throw result.error
+      // The user will be watching every one of these repositories
+      starredRepos.forEach(function(repo) {
+        profile.watching.push(Repo.addByDocument(repo));
+      });
+    } catch (error) {
+      // We don't worry too much about the stars for a user being captured
+      // We don't need to get them, they are just for convenience for the user
+      console.warn('Unable to get stars for user: ' + user._id);
+    }
 
-  var starredRepos = result.data;
+    profile.active = true;
 
-  // The user will be watching every one of these repositories
-  starredRepos.forEach(function(repo) {
-    profile.watching.push(Repo.addByDocument(repo));
-  });
-
-  profile.active = true;
-
-  // Save the user's new profile
-  user.profile = profile;
-  user.unsubscribeToken = Random.id()
-  return user;
+    // Save the user's new profile
+    user.profile = profile;
+    user.unsubscribeToken = Random.id()
+    return user;
+  } catch (err) {
+    throw new Meteor.Error(500, 'Unable to collect profile information')
+  }
 });
 
 Meteor.methods({

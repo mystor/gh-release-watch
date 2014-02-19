@@ -11,7 +11,7 @@ function customWatch(e) {
 
   Meteor.call('watch', full_name, function(err) {
     if (err)
-      console.error(err);
+      error(err);
     else
       textfield.value = '';
   });
@@ -23,7 +23,7 @@ function watch(repo) {
   return function(e) {
     Meteor.call('watch', repo, function(err) {
       if (err)
-        console.error(err);
+        error(err);
     });
 
     e.preventDefault();
@@ -34,7 +34,7 @@ function unwatch(repo) {
   return function(e) {
     Meteor.call('unwatch', repo, function(err) {
       if (err)
-        console.error(err);
+        error(err);
     });
 
     e.preventDefault();

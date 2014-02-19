@@ -31,19 +31,22 @@ Repo = {
     } else {
       // Search for the repository
       var url = 'https://api.github.com/repos/' + full_name;
-      var result = Meteor.http.get(url, {
-        params: {
-          client_id: Config.gh_client_id,
-          client_secret: Config.gh_client_secret
-        },
-        headers: { 'User-Agent': 'gh-release-watch' }
-      });
+      try {
+        var result = Meteor.http.get(url, {
+          params: {
+            client_id: Config.gh_client_id,
+            client_secret: Config.gh_client_secret
+          },
+          headers: { 'User-Agent': 'gh-release-watch' }
+        });
 
-      // The repository probably wasn't found
-      if (result.error)
-        throw result.error
-
-      Repo.create(result.data);
+        Repo.create(result.data);
+      } catch (err) {
+        if (err.response && err.response.statusCode === 404)
+          throw new Meteor.Error(404, 'The repository ' + full_name + ' does not exist');
+        else
+          throw err;
+      }
     }
 
     return full_name;
