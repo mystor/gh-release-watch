@@ -97,7 +97,7 @@ var SingleWatch = React.createClass({
         <button type="button"
           className="btn btn-info btn-xs pull-right"
           onClick={unwatch(repo)}>
-          Unwatch
+          Watching
         </button>
       );
     } else {
@@ -105,7 +105,7 @@ var SingleWatch = React.createClass({
         <button type="button"
           className="btn btn-primary btn-xs pull-right"
           onClick={watch(repo)}>
-          Watch
+          Not Watching
         </button>
       );
     }

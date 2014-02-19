@@ -100,11 +100,12 @@ function checkAndNotify() {
   notifyUsers(checkAllTags());
 }
 
-new CronJob('00 00 * * * *', function() {
-  // Clean
+new CronJob('00 00 * * * *', Meteor.bindEnvironment(function() {
   Repos.remove({ refs: 0 });
 
-  // Check repositories
   checkAndNotify();
-}, null, true, 'America/New_York');
+}, function(e) {
+  // Log the error
+  console.error(e);
+}), null, true, 'America/New_York');
 
