@@ -112,7 +112,6 @@ var WatchList = React.createClass({
   },
 
   componentWillReceiveProps: function(nextProps) {
-    console.log('hi');
     this.setState({
       history: _.union(this.state.history, nextProps.watching)
     });
