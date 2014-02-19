@@ -4,7 +4,7 @@ Login = {
       requestPermissions: ['user:email']
     }, function (err) {
       if (err) {
-        console.error(err);
+        error(err);
       }
     });
   },
@@ -12,7 +12,8 @@ Login = {
   logout: function() {
     Meteor.logout(function(err) {
       if (err)
-        console.error(err);
+        error(err);
     });
   }
 };
+

@@ -50,6 +50,15 @@ function unwatchAll(e) {
   e.preventDefault();
 }
 
+function resubscribe(e) {
+  Meteor.call('resubscribe', function(err) {
+    if (err)
+      error(err);
+  });
+
+  e.preventDefault();
+}
+
 var AddWatchForm = React.createClass({
   // Parameters:
   // -- none --
@@ -57,9 +66,9 @@ var AddWatchForm = React.createClass({
     return (
       <form onSubmit={customWatch}>
         <div className="input-group">
-          <input type="text" 
+          <input type="text"
             id="new-repo-name"
-            className="form-control" 
+            className="form-control"
             placeholder="e.g. mystor/gh-release-watch" />
 
           <span className="input-group-btn">
@@ -104,9 +113,7 @@ var SingleWatch = React.createClass({
     return (
       <li className="list-group-item">
         {watchBtn}
-        <span className="icon-book" style={{
-          'margin-left': '-5px', 'margin-right': '10px'
-        }}></span>
+        <span className="icon-book repo-icon"></span>
         <a href={ghUrl(repo)}>{repo}</a>
       </li>
     );
@@ -189,7 +196,7 @@ var EmailDisplay = React.createClass({
         <form onSubmit={this.stopEditing}
           className={this.state.valid ? 'has-success' : 'has-error'}>
           <div className="input-group">
-            <input type="text" 
+            <input type="text"
               id="email-address"
               className="form-control"
               value={this.state.email}
@@ -215,25 +222,44 @@ var EmailDisplay = React.createClass({
   }
 });
 
+var UnsubscribedWarning = React.createClass({
+  render: function() {
+    if (!this.props.user.profile.active)
+      return (
+        <div className="alert alert-info">
+          <strong>Unsubscribed</strong>
+          You are currently unsubscribed, and will not receive emails.
+          <a href="javascript:void(0)"
+            className="alert-link"
+            onClick={resubscribe}>Resubscribe</a>?
+        </div>
+      );
+    else
+      return <span />;
+  }
+});
+
 WatchManager = React.createClass({
   render: function() {
     return (
       <div>
+        <UnsubscribedWarning user={this.props.user} />
+
         <h5>Watch New Repository</h5>
 
         <AddWatchForm />
 
         <hr />
 
-        <small className="pull-right" style={{'margin-right': '10px'}}>
-          <a href="javascript:void(0)"
-            onClick={unwatchAll}>
-            Unwatch All
-          </a>
-        </small>
+        <a className="unwatch-all"
+          href="javascript:void(0)"
+          onClick={unwatchAll}>
+          Unwatch All
+        </a>
+
         <h5>Manage Current Watches</h5>
         <WatchList
-          watching={this.props.watching} 
+          watching={this.props.watching}
           history={this.props.history} />
 
         <p>
@@ -243,3 +269,4 @@ WatchManager = React.createClass({
     )
   }
 });
+

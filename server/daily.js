@@ -100,3 +100,11 @@ function checkAndNotify() {
   notifyUsers(checkAllTags());
 }
 
+new CronJob('00 00 * * * *', function() {
+  // Clean
+  Repos.remove({ refs: 0 });
+
+  // Check repositories
+  checkAndNotify();
+}, null, true, 'America/New_York');
+

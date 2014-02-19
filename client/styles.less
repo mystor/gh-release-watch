@@ -1,5 +1,4 @@
-// Make the navbar login link always float to the right
-// (even on mobile devices where navbar-right floats left)
+// Icons
 @font-face {
   font-family: 'gh-release-watch';
   src:url('fonts/gh-release-watch.eot?-popidf');
@@ -32,7 +31,36 @@
   content: "\67";
 }
 
+// Make the navbar login link always float to the right
+// (even on mobile devices where navbar-right floats left)
 .navbar-text.navbar-right {
   float: right;
+}
+
+// Position the book repository icon more nicely
+.repo-icon {
+  margin-left: -5px;
+  margin-right: 10px;
+}
+
+.unwatch-all {
+  margin-right: 10px;
+  font-size: 85%;
+  float: right;
+}
+
+.octocat {
+  display: block;
+  max-width: 50%;
+  height: auto;
+  float: right;
+}
+
+@media (max-width: 767px) {
+  .octocat {
+    margin: 0px auto;
+    max-width: 100%;
+    float: none;
+  }
 }
 

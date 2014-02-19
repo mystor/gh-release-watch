@@ -85,11 +85,20 @@ Meteor.methods({
   },
 
   resubscribe: function(token) {
-    check(token, String);
+    if (token) {
+      check(token, String);
 
-    Meteor.users.update({ unsubscribeToken: token }, {
-      $set: { 'profile.active' : true }
-    });
+      Meteor.users.update({ unsubscribeToken: token }, {
+        $set: { 'profile.active': true }
+      });
+    } else {
+      if (!this.userId)
+        throw new Meteor.Error(403, 'Must be logged in or have unsubscribe token to resubscribe');
+
+      Meteor.users.update({ _id: this.userId }, {
+        $set: { 'profile.active': true }
+      });
+    }
   }
 });
 
