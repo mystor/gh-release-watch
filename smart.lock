@@ -2,19 +2,13 @@
   "meteor": {},
   "dependencies": {
     "basePackages": {
-      "semantic-ui": {},
       "page-js-ie-support": {},
       "HTML5-History-API": {},
       "fast-render": {},
       "bootstrap-3": {},
-      "font-awesome": {}
+      "handlebars-server": {}
     },
     "packages": {
-      "semantic-ui": {
-        "git": "https://github.com/nooitaf/meteor-semantic-ui.git",
-        "tag": "v0.12.4",
-        "commit": "a9dec18066d80e575e57189e005782436ad1d87f"
-      },
       "page-js-ie-support": {
         "git": "https://github.com/tmeasday/meteor-page-js-ie-support.git",
         "tag": "v1.3.5",
@@ -35,10 +29,10 @@
         "tag": "v3.1.0-1",
         "commit": "329dccb08bfc18c635676dea600ac9953162cda9"
       },
-      "font-awesome": {
-        "git": "https://github.com/nate-strauser/meteor-font-awesome.git",
-        "tag": "v4.0.3",
-        "commit": "61e9361384347547ae144f8228faa4deffda23db"
+      "handlebars-server": {
+        "git": "https://github.com/EventedMind/meteor-handlebars-server.git",
+        "tag": "v1.1.0",
+        "commit": "ed99c8e9280894519f44a5b4c84f66ff596c5450"
       }
     }
   }

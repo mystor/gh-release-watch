@@ -1,10 +1,9 @@
 {
   "packages": {
-    "semantic-ui": {},
     "page-js-ie-support": {},
     "HTML5-History-API": {},
     "fast-render": {},
     "bootstrap-3": {},
-    "font-awesome": {}
+    "handlebars-server": {}
   }
 }

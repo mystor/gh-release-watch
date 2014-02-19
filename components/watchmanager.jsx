@@ -95,9 +95,9 @@ var SingleWatch = React.createClass({
     return (
       <li className="list-group-item">
         {watchBtn}
-        <i className="fa fa-book" style={{
+        <span className="icon-book" style={{
           'margin-left': '-5px', 'margin-right': '10px'
-        }}></i>
+        }}></span>
         <a href={ghUrl(repo)}>{repo}</a>
       </li>
     );
@@ -105,19 +105,84 @@ var SingleWatch = React.createClass({
 });
 
 var WatchList = React.createClass({
+  getInitialState: function() {
+    return {
+      history: this.props.watching
+    };
+  },
+
+  componentWillReceiveProps: function(nextProps) {
+    console.log('hi');
+    this.setState({
+      history: _.union(this.state.history, nextProps.watching)
+    });
+  },
+
   // Parameters:
-  // @history - all repositories to show
   // @watching - the respositories currently being watched
   render: function() {
-    var self = this;
+    var history = this.state.history;
+    var watching = this.props.watching;
 
     return (
       <ul className="list-group">
-        {this.props.history.map(function(repo) {
-          return <SingleWatch repo={repo} watching={self.props.watching} key={repo} />
+        {history.map(function(repo) {
+          return <SingleWatch repo={repo} watching={watching} key={repo} />
         })}
       </ul>
     );
+  }
+});
+
+var EmailDisplay = React.createClass({
+  getInitialState: function() {
+    return {editing: false};
+  },
+
+  startEditing: function(e) {
+    e.preventDefault();
+    this.setState({editing: true});
+  },
+
+  stopEditing: function(e) {
+    e.preventDefault();
+    var textbox = document.getElementById('email-address');
+    var newEmail = textbox.value;
+    Meteor.users.update({ _id: Meteor.userId() }, {
+      $set: { 'profile.email': newEmail }
+    });
+    this.setState({editing: false});
+  },
+
+  // Parameters:
+  // @user - the user object
+  render: function() {
+    var user = this.props.user;
+
+    if (this.state.editing)
+      return (
+        <form onSubmit={this.stopEditing}>
+          <div className="input-group">
+            <input type="text" 
+              id="email-address"
+              className="form-control" 
+              defaultValue={user.profile.email} />
+            <span className="input-group-btn">
+              <button className="btn btn-default" type="submit">
+                Save
+              </button>
+            </span>
+          </div>
+        </form>
+      );
+    else
+      return (
+        <span>
+          <strong>{user.profile.email + ' '}</strong>
+          (<a href="javascript:void(0)"
+            onClick={this.startEditing}>change</a>)
+        </span>
+      );
   }
 });
 
@@ -136,11 +201,9 @@ WatchManager = React.createClass({
           watching={this.props.watching} 
           history={this.props.history} />
 
-        <h5>Every day, we will check the repositories above for you, and send you an email if a new release has occured.  These emails are currently being sent to:</h5>
-        <span>
-          {this.props.user.profile.email + ' '}
-          <a href="#">(change)</a>
-        </span>
+        <p>
+          When there are new releases, send an email to <EmailDisplay user={this.props.user} />
+        </p>
       </div>
     )
   }

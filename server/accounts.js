@@ -44,7 +44,11 @@ Accounts.onCreateUser(function (options, user) {
     profile.watching.push(Repo.addByDocument(repo));
   });
 
+  profile.active = true;
+
   // Save the user's new profile
   user.profile = profile;
+  user.unsubscribeToken = Random.id()
   return user;
 });
+

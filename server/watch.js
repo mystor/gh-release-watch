@@ -14,6 +14,7 @@ Repo = {
   create: function(repo) {
     var newRepo = _.pick(repo,
                          'full_name',
+                         'name',
                          'tags_url',
                          'url',
                          'html_url');
@@ -24,7 +25,7 @@ Repo = {
 
   addByFullName: function(full_name) {
     var doc = Repos.findOne({ full_name: full_name });
-    console.log(doc);
+
     if (doc) {
       Repo.refer(doc._id);
     } else {
@@ -50,6 +51,7 @@ Repo = {
 
   addByDocument: function(repo) {
     var doc = Repos.findOne({ full_name: repo.full_name });
+
     if (doc) {
       Repo.refer(doc._id);
     } else {
@@ -61,6 +63,7 @@ Repo = {
 
   removeByFullName: function(full_name) {
     var doc = Repos.findOne({ full_name: full_name });
+
     if (doc) {
       Repos.update({ _id: doc._id }, {
         $inc: {

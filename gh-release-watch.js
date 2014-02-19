@@ -28,6 +28,13 @@ RouteCore.map(function () {
     }, About({loggingIn: loggingIn}));
   });
 
+  Routes.unsubscribe = this.route('/unsubscribe/:token', function (ctx) {
+    // TODO
+    return React.DOM.h1(null, 'hi');
+  });
+
   if (Meteor.isClient)
-    this.route('*', function () {this.redirect('/');});
+    this.route('*', function(ctx) {
+      return React.DOM.h1(null, "404 - Not Found");
+    });
 });
