@@ -29,12 +29,41 @@ RouteCore.map(function () {
   });
 
   Routes.unsubscribe = this.route('/unsubscribe/:token', function (ctx) {
-    // TODO
-    return React.DOM.h1(null, 'hi');
+    // We want to start unsubscribed when the page loads
+    if (Meteor.isServer)
+      Meteor.call('unsubscribe', ctx.params.token);
+
+    var user = this.user();
+    var loggingIn = Meteor.isClient ? Meteor.loggingIn() : false;
+
+    if (this.subscribe('unsubscribe', ctx.params.token).ready()) {
+      var theUser = Meteor.users.findOne({ unsubscribeToken: ctx.params.token });
+
+      if (theUser) {
+        return Layout({
+          user: user,
+          loggingIn: loggingIn
+        }, Unsubscribe({ user: theUser }));
+      } else {
+        return Layout({
+          user: user,
+          loggingIn: loggingIn
+        }, NotFound(null));
+      }
+    } else {
+      // We're on the client (as subscriptions are always ready on the server
+      // This must be from a link (how?), so we fall through to server calls
+      return false;
+    }
   });
 
   if (Meteor.isClient)
     this.route('*', function(ctx) {
-      return React.DOM.h1(null, "404 - Not Found");
+      var user = this.user();
+      var loggingIn = Meteor.isClient ? Meteor.loggingIn() : false;
+      return Layout({
+        user: user,
+        loggingIn: loggingIn
+      }, NotFound(null));
     });
 });

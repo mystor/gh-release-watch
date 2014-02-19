@@ -65,14 +65,13 @@ function notifyUsers(newTags) {
 
     var email = EmailGen.generate(report, user.unsubscribeToken);
 
-    /* Email.send({
+    Email.send({
       to: user.profile.email,
       from: 'today@gh-release-watch.com',
       subject: email.subject,
       text: email.text,
       html: email.html
-      }); */
-    console.log('sent email: ' + email.text);
+    });
   });
 }
 

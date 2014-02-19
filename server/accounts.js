@@ -52,3 +52,31 @@ Accounts.onCreateUser(function (options, user) {
   return user;
 });
 
+Meteor.methods({
+  unsubscribe: function(token) {
+    check(token, String);
+
+    Meteor.users.update({ unsubscribeToken: token }, {
+      $set: { 'profile.active': false }
+    });
+  },
+
+  resubscribe: function(token) {
+    check(token, String);
+
+    Meteor.users.update({ unsubscribeToken: token }, {
+      $set: { 'profile.active' : true }
+    });
+  }
+});
+
+Meteor.publish('unsubscribe', function(token) {
+  return Meteor.users.find({ unsubscribeToken: token }, {
+    fields: {
+      _id: 1,
+      profile: 1,
+      unsubscribeToken: 1
+    }
+  });
+});
+
