@@ -36,7 +36,7 @@ Unsubscribe: http://gh-release-watch.com/unsubscribe/yzKz32eaS4qCLgtwY
 ```
 
 HTML:
-image goes here
+<p>The following projects have pushed new releases:</p><ul style="margin: 0px 0px 0px 20px; padding: 0px;"><li style="list-style-type: none; margin-bottom: 5px;"><a style="color: #4488AA; text-decoration: none;" href="https://github.com/meteor/meteor">meteor/meteor</a> (<a style="color: #4488AA; text-decoration: none;" href="https://github.com/meteor/meteor/releases/tag/release%2F0.7.1-rc1">release/0.7.1-rc1</a>)</li></ul><small style="margin-top: 20px; display: block;"><a style="color: #4488AA; text-decoration: none;" href="http://gh-release-watch.com/">manage watches</a> | <a style="color: #4488AA; text-decoration: none;" href=3D"http://gh-release-watch.com/unsubscribe/yzKz32eaS4qCLgtwY">unsubscribe</a></small>
 
 ### Can I change my email once I sign up?
 Yes, at the bottom of the page there is a (change) link to allow you to change your email.  Your email defaults to your public one on GitHub.
