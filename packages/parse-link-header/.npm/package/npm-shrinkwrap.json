@@ -1,0 +1,31 @@
+{
+  "dependencies": {
+    "parse-link-header": {
+      "version": "0.1.0",
+      "dependencies": {
+        "xtend": {
+          "version": "2.0.6",
+          "dependencies": {
+            "is-object": {
+              "version": "0.1.2"
+            },
+            "object-keys": {
+              "version": "0.2.0",
+              "dependencies": {
+                "foreach": {
+                  "version": "2.0.4"
+                },
+                "indexof": {
+                  "version": "0.0.1"
+                },
+                "is": {
+                  "version": "0.2.7"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

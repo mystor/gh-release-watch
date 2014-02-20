@@ -4,21 +4,6 @@ function ghUrl(repo) {
   return 'http://github.com/' + repo;
 }
 
-function customWatch(e) {
-  var textfield = document.getElementById('new-repo-name');
-  var full_name = textfield.value;
-  textfield.value = '';
-
-  Meteor.call('watch', full_name, function(err) {
-    if (err)
-      error(err);
-    else
-      textfield.value = '';
-  });
-
-  e.preventDefault();
-}
-
 function watch(repo) {
   return function(e) {
     Meteor.call('watch', repo, function(err) {
@@ -60,25 +45,102 @@ function resubscribe(e) {
 }
 
 var AddWatchForm = React.createClass({
+  type: function(e) {
+    var newQuery = e.target.value;
+    var newDisplay;
+
+    if (newQuery.length > 0) {
+      newDisplay = this.props.user.profile.starred;
+      var watching = this.props.user.profile.watching;
+
+      var parts = newQuery.split('/');
+
+      newDisplay = _.filter(newDisplay, function(star) {
+        // Don't suggest things they're already watching
+        if (watching.indexOf(star) !== -1)
+          return false;
+
+        var good = true;
+        var starParts = star.split('/');
+
+        if (parts.length > 1) {
+          good = good && (starParts[0].indexOf(parts[0]) !== -1);
+          good = good && (starParts[1].indexOf(parts[1]) !== -1);
+        } else {
+          good = good && (star.indexOf(newQuery) !== -1);
+        }
+
+        return good;
+      });
+
+      if (newDisplay.length > 3)
+        newDisplay = newDisplay.slice(0, 3);
+    } else {
+      newDisplay = [];
+    }
+
+    this.setState({
+      query: newQuery,
+      display: newDisplay
+    });
+  },
+
+  submit: function(e) {
+    var textfield = document.getElementById('new-repo-name');
+    var full_name = textfield.value;
+
+    Meteor.call('watch', full_name, function(err) {
+      if (err)
+        error(err);
+    });
+
+    this.setState({
+      query: '',
+      display: []
+    });
+
+    e.preventDefault();
+  },
+
+  getInitialState: function() {
+    return {
+      display: [],
+      query: ''
+    };
+  },
+
   // Parameters:
   // -- none --
   render: function() {
-    return (
-      <form onSubmit={customWatch}>
-        <div className="input-group">
-          <input type="text"
-            id="new-repo-name"
-            className="form-control"
-            placeholder="e.g. mystor/gh-release-watch" />
+    var user = this.props.user;
+    var watching = user.profile.watching;
 
-          <span className="input-group-btn">
-            <button type="button"
-              className="btn btn-primary">
-              Watch
-            </button>
-          </span>
-        </div>
-      </form>
+    return (
+      <div>
+        <form onSubmit={this.submit}>
+          <div className="input-group">
+            <input type="text"
+              id="new-repo-name"
+              className="form-control"
+              placeholder="e.g. mystor/gh-release-watch"
+              value={this.state.query}
+              onChange={this.type} />
+
+            <span className="input-group-btn">
+              <button type="button"
+                className="btn btn-primary">
+                Watch
+              </button>
+            </span>
+          </div>
+        </form>
+
+        <ul className="list-group">
+          {this.state.display.map(function(repo) {
+            return <SingleWatch repo={repo} watching={watching} key={repo} />
+          })}
+        </ul>
+      </div>
     )
   }
 });
@@ -247,7 +309,7 @@ WatchManager = React.createClass({
 
         <h5>Watch New Repository</h5>
 
-        <AddWatchForm />
+        <AddWatchForm user={this.props.user} />
 
         <hr />
 

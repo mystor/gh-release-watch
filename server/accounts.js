@@ -14,7 +14,7 @@ Accounts.onCreateUser(function (options, user) {
       headers: { "User-Agent": "gh-release-watch" }
     });
 
-    // Limit the fields we want to store in the user's profile
+    // Create the user's initial profile
     profile = _.pick(result.data,
       "login",
       "email",
@@ -22,34 +22,20 @@ Accounts.onCreateUser(function (options, user) {
       "html_url",
       "starred_url");
     profile.watching = [];
-
-    // Get the repositories which the user is starring
-    var starredUrl = profile.starred_url.replace(/\{.*\}/g, '');
-    try {
-      result = Meteor.http.get(starredUrl, {
-        params: {
-          access_token: accessToken
-        },
-        headers: { 'User-Agent': 'gh-release-watch' }
-      });
-
-      var starredRepos = result.data;
-
-      // The user will be watching every one of these repositories
-      starredRepos.forEach(function(repo) {
-        profile.watching.push(Repo.addByDocument(repo));
-      });
-    } catch (error) {
-      // We don't worry too much about the stars for a user being captured
-      // We don't need to get them, they are just for convenience for the user
-      console.warn('Unable to get stars for user: ' + user._id);
-    }
-
     profile.active = true;
 
-    // Save the user's new profile
     user.profile = profile;
+
+    // Get the user's stars
+    var star_props = Stars.getStars(user);
+    user.profile.starred = star_props.starred;
+    user.starredETag = star_props.ETag;
+    user.profile.starred_checked = new Date();
+
+    // Generate an unsubscribeToken
     user.unsubscribeToken = Random.id()
+
+    // Return the fully formed user
     return user;
   } catch (err) {
     throw new Meteor.Error(500, 'Unable to collect profile information')
