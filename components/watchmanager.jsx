@@ -47,15 +47,17 @@ function resubscribe(e) {
 var AddWatchForm = React.createClass({
   type: function(e) {
     var newQuery = e.target.value;
+    var effectiveQuery = newQuery.toLowerCase();
     var newDisplay;
 
     if (newQuery.length > 0) {
       newDisplay = this.props.user.profile.starred;
       var watching = this.props.user.profile.watching;
 
-      var parts = newQuery.split('/');
+      var parts = effectiveQuery.split('/');
 
       newDisplay = _.filter(newDisplay, function(star) {
+        star = star.toLowerCase();
         // Don't suggest things they're already watching
         if (watching.indexOf(star) !== -1)
           return false;
@@ -67,14 +69,14 @@ var AddWatchForm = React.createClass({
           good = good && (starParts[0].indexOf(parts[0]) !== -1);
           good = good && (starParts[1].indexOf(parts[1]) !== -1);
         } else {
-          good = good && (star.indexOf(newQuery) !== -1);
+          good = good && (star.indexOf(effectiveQuery) !== -1);
         }
 
         return good;
       });
 
-      if (newDisplay.length > 3)
-        newDisplay = newDisplay.slice(0, 3);
+      if (newDisplay.length > 30)
+        newDisplay = newDisplay.slice(0, 30);
     } else {
       newDisplay = [];
     }
@@ -135,7 +137,10 @@ var AddWatchForm = React.createClass({
           </div>
         </form>
 
-        <ul className="list-group">
+        <ul className="list-group" style={{
+          'max-height': '150px',
+          'overflow-y': 'auto'
+        }}>
           {this.state.display.map(function(repo) {
             return <SingleWatch repo={repo} watching={watching} key={repo} />
           })}
@@ -201,13 +206,20 @@ var WatchList = React.createClass({
     var history = this.state.history;
     var watching = this.props.watching;
 
-    return (
-      <ul className="list-group">
-        {history.map(function(repo) {
-          return <SingleWatch repo={repo} watching={watching} key={repo} />
-        })}
-      </ul>
-    );
+    if (history.length > 0)
+      return (
+        <ul className="list-group">
+          {history.map(function(repo) {
+            return <SingleWatch repo={repo} watching={watching} key={repo} />
+          })}
+        </ul>
+      );
+    else
+      return (
+        <div className="empty-watch">
+          ~~ You aren&apos;t watching anything! Start by typing above ~~
+        </div>
+      );
   }
 });
 
