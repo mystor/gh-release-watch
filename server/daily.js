@@ -100,12 +100,16 @@ function checkAndNotify() {
   notifyUsers(checkAllTags());
 }
 
-new CronJob('00 00 * * * *', Meteor.bindEnvironment(function() {
+// Every day at midnight
+later.setInterval(Meteor.bindEnvironment(function() {
   Repos.remove({ refs: 0 });
 
   checkAndNotify();
 }, function(e) {
-  // Log the error
   console.error(e);
-}), null, true, 'America/New_York');
+}), {
+  schedules: [
+    {h: [0], m: [0]}
+  ]
+});
 
