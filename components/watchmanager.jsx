@@ -4,28 +4,6 @@ function ghUrl(repo) {
   return 'http://github.com/' + repo;
 }
 
-function watch(repo) {
-  return function(e) {
-    Meteor.call('watch', repo, function(err) {
-      if (err)
-        error(err);
-    });
-
-    e.preventDefault();
-  }
-}
-
-function unwatch(repo) {
-  return function(e) {
-    Meteor.call('unwatch', repo, function(err) {
-      if (err)
-        error(err);
-    });
-
-    e.preventDefault();
-  }
-}
-
 function unwatchAll(e) {
   Meteor.call('unwatchAll', function(err) {
     if (err)
@@ -57,19 +35,20 @@ var AddWatchForm = React.createClass({
       var parts = effectiveQuery.split('/');
 
       newDisplay = _.filter(newDisplay, function(star) {
-        star = star.toLowerCase();
         // Don't suggest things they're already watching
         if (watching.indexOf(star) !== -1)
           return false;
 
+        lower_star = star.toLowerCase();
+
         var good = true;
-        var starParts = star.split('/');
+        var starParts = lower_star.split('/');
 
         if (parts.length > 1) {
           good = good && (starParts[0].indexOf(parts[0]) !== -1);
           good = good && (starParts[1].indexOf(parts[1]) !== -1);
         } else {
-          good = good && (star.indexOf(effectiveQuery) !== -1);
+          good = good && (lower_star.indexOf(effectiveQuery) !== -1);
         }
 
         return good;
@@ -83,7 +62,8 @@ var AddWatchForm = React.createClass({
 
     this.setState({
       query: newQuery,
-      display: newDisplay
+      display: newDisplay,
+      selectedRow: -1
     });
   },
 
@@ -91,6 +71,12 @@ var AddWatchForm = React.createClass({
     var textfield = document.getElementById('new-repo-name');
     var full_name = textfield.value;
 
+    // Detect when a suggestion is currently selected
+    if (this.state.selectedRow !== -1) {
+      full_name = this.state.display[this.state.selectedRow];
+    }
+
+    // Tell meteor to start watching the repository
     Meteor.call('watch', full_name, function(err) {
       if (err)
         error(err);
@@ -98,16 +84,41 @@ var AddWatchForm = React.createClass({
 
     this.setState({
       query: '',
-      display: []
+      display: [],
+      selectedRow: -1
     });
 
     e.preventDefault();
   },
 
+  keyDown: function(e) {
+    var selectedRow = this.state.selectedRow;
+    var display = this.state.display;
+
+    if (e.keyCode === 38) { // UP
+      if (selectedRow > 0)
+        this.setState({
+          selectedRow: selectedRow - 1
+        });
+
+      e.preventDefault();
+    } else if (e.keyCode === 40) { // DOWN
+      if (selectedRow < display.length - 1)
+        this.setState({
+          selectedRow: selectedRow + 1
+        });
+
+      e.preventDefault();
+    }
+
+    console.log(this.state.selectedRow);
+  },
+
   getInitialState: function() {
     return {
       display: [],
-      query: ''
+      query: '',
+      selectedRow: -1
     };
   },
 
@@ -116,6 +127,7 @@ var AddWatchForm = React.createClass({
   render: function() {
     var user = this.props.user;
     var watching = user.profile.watching;
+    var selectedRow = this.state.selectedRow;
 
     return (
       <div>
@@ -126,7 +138,8 @@ var AddWatchForm = React.createClass({
               className="form-control"
               placeholder="e.g. mystor/gh-release-watch"
               value={this.state.query}
-              onChange={this.type} />
+              onChange={this.type}
+              onKeyDown={this.keyDown} />
 
             <span className="input-group-btn">
               <button type="button"
@@ -135,51 +148,63 @@ var AddWatchForm = React.createClass({
               </button>
             </span>
           </div>
+          <ul className="list-group" style={{
+            'max-height': '150px',
+            'overflow-y': 'auto'
+          }}>
+            {this.state.display.map(function(repo, i) {
+              return <SingleWatch
+                repo={repo}
+                watching={watching}
+                key={repo}
+                selected={selectedRow === i} />
+            })}
+          </ul>
         </form>
-
-        <ul className="list-group" style={{
-          'max-height': '150px',
-          'overflow-y': 'auto'
-        }}>
-          {this.state.display.map(function(repo) {
-            return <SingleWatch repo={repo} watching={watching} key={repo} />
-          })}
-        </ul>
       </div>
     )
   }
 });
 
 var SingleWatch = React.createClass({
+  watch: function(e) {
+    if (e.target.href)
+      return;
+
+    Meteor.call('watch', this.props.repo, function(err) {
+      if (err)
+        error(err);
+    });
+  },
+
+  unwatch: function(e) {
+    if (e.target.href)
+      return;
+
+    Meteor.call('unwatch', this.props.repo, function(err) {
+      if (err)
+        error(err);
+    });
+  },
+
   // Parameters:
   // @repo - the repository in question
   // @watching - the repositories currently being watched
   render: function() {
     var watchBtn,
         repo = this.props.repo,
-        watching = this.props.watching;
-
-    if (watching.indexOf(repo) !== -1) {
-      watchBtn = (
-        <button type="button"
-          className="btn btn-info btn-xs pull-right"
-          onClick={unwatch(repo)}>
-          Watching
-        </button>
-      );
-    } else {
-      watchBtn = (
-        <button type="button"
-          className="btn btn-primary btn-xs pull-right"
-          onClick={watch(repo)}>
-          Not Watching
-        </button>
-      );
-    }
+        watching = this.props.watching.indexOf(repo) !== -1,
+        selected = this.props.selected;
 
     return (
-      <li className="list-group-item">
-        {watchBtn}
+      <li className={"list-group-item" + (selected ? ' active' : '')}
+        onClick={watching ? this.unwatch : this.watch}>
+
+        <button type="button"
+          className={'btn btn-xs pull-right ' + (watching ? 'btn-info' : 'btn-primary')}>
+          {watching ? 'Watching' : 'Not Watching'}
+        </button>
+
         <span className="icon-book repo-icon"></span>
         <a href={ghUrl(repo)}>{repo}</a>
       </li>
@@ -211,7 +236,7 @@ var WatchList = React.createClass({
         <ul className="list-group">
           {history.map(function(repo) {
             return <SingleWatch repo={repo} watching={watching} key={repo} />
-          })}
+          }).reverse()}
         </ul>
       );
     else
