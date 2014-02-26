@@ -98,3 +98,14 @@ Meteor.publish('unsubscribe', function(token) {
   });
 });
 
+Meteor.publish('user', function() {
+  if (!this.userId)
+    return [];
+
+  return Meteor.users.find({ _id: this.userId }, {
+    fields: {
+      _id: 1,
+      profile: 1
+    }
+  });
+});

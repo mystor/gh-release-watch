@@ -2,10 +2,15 @@ Routes = {};
 
 RouteCore.map(function () {
   Routes.home = this.route('/', function (ctx) {
+    // Make sure that the user is sent down to the client
+    // This will cause fast-render to embed the user object
+    // into the request to the client
+    this.subscribe('user');
+
     var user = this.user();
     var loggingIn = Meteor.isClient ? Meteor.loggingIn() : false;
-    
-    if (!loggingIn && user) {
+
+    if (user) {
       this.setDefault('repoHistory', user.profile.watching);
       if (Meteor.isClient)
         this.set('repoHistory',
