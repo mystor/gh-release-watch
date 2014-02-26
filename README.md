@@ -17,9 +17,7 @@ mrt
 ## FAQ
 
 ### How often does GHRW check for new tags?
-GHRW checks every for new tags from the GitHub API every day at midnight.
-
-The node `cron` implementation which it currently uses internally is a bit faulty, and it thus appears to be checking every hour right now. There is a good chance that this will change/be customizable.
+GHRW checks every for new tags from the GitHub API every hour.
 
 ### How are the repository suggestions generated?
 When you first sign up, your stars are retrieved from GitHub, and used for suggestions. They are currently not being updated when you change your stars on GitHub, though that may change in the future.

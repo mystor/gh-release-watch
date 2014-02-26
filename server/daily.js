@@ -107,9 +107,5 @@ later.setInterval(Meteor.bindEnvironment(function() {
   checkAndNotify();
 }, function(e) {
   console.error(e);
-}), {
-  schedules: [
-    {h: [0], m: [0]}
-  ]
-});
+}), later.parse.recur().every(1).hour());
 
