@@ -1,8 +1,6 @@
 function checkTags(repo) {
   var new_tags = [];
 
-  console.log('# Checking Tags for ' + repo.full_name);
-
   var headers = { 'User-Agent': 'gh-release-watch' };
   if (repo.ETag)
     headers['If-None-Match'] = repo.ETag;
@@ -16,7 +14,7 @@ function checkTags(repo) {
     });
 
     if (result.statusCode === 304) {
-      console.log('-> 304 Not Modified');
+      // console.log('# ' + repo.full_name + ' - 304 Not Modified');
       return []; // The file hasn't changed since last time we looked at it
     }
 
@@ -30,7 +28,7 @@ function checkTags(repo) {
       });
     }
 
-    console.log('-> Found ' + new_tags.length + ' New Tags');
+    console.log('# ' + repo.full_name + ' - Found ' + new_tags.length + ' New Tags');
 
     Repos.update({ _id: repo._id }, {
       $set: {
@@ -100,7 +98,6 @@ function checkAndNotify() {
   notifyUsers(checkAllTags());
 }
 
-// Every day at midnight
 later.setInterval(Meteor.bindEnvironment(function() {
   Repos.remove({ refs: 0 });
 
