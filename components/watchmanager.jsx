@@ -149,7 +149,7 @@ var AddWatchForm = React.createClass({
             </span>
           </div>
           <ul className="list-group" style={{
-            'max-height': '150px',
+            'max-height': '400px',
             'overflow-y': 'auto'
           }}>
             {this.state.display.map(function(repo, i) {

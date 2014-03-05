@@ -1,6 +1,6 @@
 {
   "packages": {
-    "routecore": "0.0.1",
+    "routecore": "0.1.0",
     "bootstrap-3": "3.1.0-1"
   }
 }
