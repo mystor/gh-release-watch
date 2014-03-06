@@ -1,0 +1,9 @@
+// Configuration variables
+Config = {
+  gh_client_id: CLIENT_ID_HERE,
+  gh_client_secret: CLIENT_SECRET_HERE
+};
+
+// OPTIONAL in dev environment
+// process.env.MAIL_URL = 'smtp://...';
+
