@@ -1,7 +1,9 @@
 // Configuration variables
 Config = {
   gh_client_id: CLIENT_ID_HERE,
-  gh_client_secret: CLIENT_SECRET_HERE
+  gh_client_secret: CLIENT_SECRET_HERE,
+  user_agent: 'USER_AGENT',
+  email_subject_prefix: '[SUBJECT PREFIX] '
 };
 
 // OPTIONAL in dev environment

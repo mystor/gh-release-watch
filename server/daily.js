@@ -1,7 +1,7 @@
 function checkTags(repo) {
   var new_tags = [];
 
-  var headers = { 'User-Agent': 'gh-release-watch' };
+  var headers = { 'User-Agent': Config.user_agent };
   if (repo.ETag)
     headers['If-None-Match'] = repo.ETag;
   try {

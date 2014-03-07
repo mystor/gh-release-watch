@@ -11,7 +11,7 @@ Accounts.onCreateUser(function (options, user) {
       params: {
         access_token: accessToken
       },
-      headers: { "User-Agent": "gh-release-watch" }
+      headers: { 'User-Agent': Config.user_agent }
     });
 
     // Create the user's initial profile

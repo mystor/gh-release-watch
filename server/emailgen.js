@@ -13,7 +13,7 @@ function escapeHtml(s) {
 
 EmailGen = {
   subject: function(report) {
-    var subject = "[GH Release Watch] ";
+    var subject = Config.email_subject_prefix;
     subject += report.map(function(repo) {return repo.name;}).join(', ');
 
     return subject;
@@ -63,8 +63,8 @@ EmailGen = {
   },
 
   generate: function(report, unsubscribeToken) {
-    var manageUrl = 'http://gh-release-watch.com' + Routes.home();
-    var unsubscribeUrl = 'http://gh-release-watch.com' + Routes.unsubscribe(unsubscribeToken);
+    var manageUrl = Meteor.absoluteUrl(Routes.home().substring(1));
+    var unsubscribeUrl = Meteor.absoluteUrl(Routes.unsubscribe(unsubscribeToken).substring(1));
 
     return {
       subject: EmailGen.subject(report),
