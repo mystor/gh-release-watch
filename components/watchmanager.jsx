@@ -22,6 +22,38 @@ function resubscribe(e) {
   e.preventDefault();
 }
 
+function getUserRepos(user) {
+  user = user.toLowerCase();
+  var uRepos = Deps.nonreactive(function() {
+    return UserRepos.findOne({user: user});
+  });
+  if (uRepos)
+    return uRepos.repos;
+
+  UserRepos.insert({
+    user: user,
+    repos: []
+  });
+  var url = 'https://api.github.com/users/'+user+'/repos';
+  HTTP.get(url, function(err, res) {
+    if (err) {
+      // Don't display an error, the user may not exist
+      // or we may have run out of unauthenticated api calls
+      return;
+    }
+
+    UserRepos.update({user: user}, {
+      $set: {
+        repos: res.data.map(function(repo) {
+          return repo.full_name
+        })
+      }
+    });
+  });
+
+  return [];
+};
+
 var AddWatchForm = React.createClass({
   type: function(e) {
     var newQuery = e.target.value;
@@ -33,6 +65,14 @@ var AddWatchForm = React.createClass({
       var watching = this.props.user.profile.watching;
 
       var parts = effectiveQuery.split('/');
+
+      if (parts.length > 1) {
+        var targetUser = parts[0];
+        newDisplay = _.union(
+          newDisplay,
+          getUserRepos(targetUser)
+        );
+      }
 
       newDisplay = _.filter(newDisplay, function(star) {
         // Don't suggest things they're already watching
@@ -110,8 +150,6 @@ var AddWatchForm = React.createClass({
 
       e.preventDefault();
     }
-
-    console.log(this.state.selectedRow);
   },
 
   getInitialState: function() {
@@ -152,7 +190,7 @@ var AddWatchForm = React.createClass({
             'max-height': '400px',
             'overflow-y': 'auto'
           }}>
-            {this.state.display.map(function(repo, i) {
+          {this.state.display.map(function(repo, i) {
               return <SingleWatch
                 repo={repo}
                 watching={watching}
