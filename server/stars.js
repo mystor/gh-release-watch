@@ -15,7 +15,7 @@ Stars = {
           per_page: 100
         },
         headers: {
-          'User-Agent': 'gh-release-watch',
+          'User-Agent': Config.user_agent,
           'If-None-Match': ETag
         }
       });
@@ -54,7 +54,7 @@ Stars = {
             page: next.page,
             per_page: next.per_page
           },
-          headers: { 'User-Agent': 'gh-release-watch' }
+          headers: { 'User-Agent': Config.user_agent }
         });
       }
     } catch (err) {

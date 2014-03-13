@@ -40,7 +40,7 @@ Repo = {
             client_id: Config.gh_client_id,
             client_secret: Config.gh_client_secret
           },
-          headers: { 'User-Agent': 'gh-release-watch' }
+          headers: { 'User-Agent': Config.user_agent }
         });
 
         Repo.create(result.data);
