@@ -85,7 +85,7 @@ function notifyUsers(newTags) {
     console.log('-> Emailing ' + user.profile.email + ' - ' + email.subject);
     Email.send({
       to: user.profile.email,
-      from: 'today@gh-release-watch.com',
+      from: 'GH Release Watch <releases@gh-release-watch.com>',
       subject: email.subject,
       text: email.text,
       html: email.html
