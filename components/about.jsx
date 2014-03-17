@@ -7,7 +7,7 @@ About = React.createClass({
         <img src="images/inspectocat.png" className="octocat" />
 
         <h1>Github Release Watch</h1>
-        <h4>Github Release Watch checks your favourite Github repositories every day to see if any new tags or releases have been added.</h4>
+        <h4>Github Release Watch checks your favourite Github repositories for any new tags or releases.</h4>
         <h4>If they have, it sends you an email, making sure that you stay in the loop!</h4>
 
         <p className="text-center">
