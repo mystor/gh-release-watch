@@ -4,7 +4,7 @@ About = React.createClass({
   render: function() {
     return (
       <div>
-        <img src="images/inspectocat.png" className="octocat" />
+        <img src="/images/inspectocat.png" className="octocat" />
 
         <h1>Github Release Watch</h1>
         <h4>Github Release Watch checks your favourite Github repositories for any new tags or releases.</h4>

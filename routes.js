@@ -56,9 +56,12 @@ RouteCore.map(function () {
         }, NotFound(null));
       }
     } else {
-      // We're on the client (as subscriptions are always ready on the server
-      // This must be from a link (how?), so we fall through to server calls
-      return false;
+      // This is weird, but it happens sometimes.
+      // Just display the notFound template while the subscription is created.
+      return Layout({
+        user: user,
+        loggingIn: loggingIn
+      }, NotFound(null));
     }
   });
 
