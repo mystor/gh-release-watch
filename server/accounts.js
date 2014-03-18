@@ -1,7 +1,7 @@
 // When new users are created, we want to use our access
 // to the Github API to get some information about them.
 // Namely, we want to know their email (so we can send them
-// the update emails), and the repositories they are starring.
+// the update emails)
 Accounts.onCreateUser(function (options, user) {
   var accessToken = user.services.github.accessToken;
 
@@ -26,19 +26,13 @@ Accounts.onCreateUser(function (options, user) {
 
     user.profile = profile;
 
-    // Get the user's stars
-    var star_props = Stars.getStars(user);
-    user.profile.starred = star_props.starred;
-    user.starredETag = star_props.ETag;
-    user.profile.starred_checked = new Date();
-
     // Generate an unsubscribeToken
-    user.unsubscribeToken = Random.id()
+    user.unsubscribeToken = Random.id();
 
     // Return the fully formed user
     return user;
   } catch (err) {
-    throw new Meteor.Error(500, 'Unable to collect profile information')
+    throw new Meteor.Error(500, 'Unable to collect profile information');
   }
 });
 

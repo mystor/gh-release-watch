@@ -1,5 +1,39 @@
 /** @jsx React.DOM */
 
+function getUserStars(user) {
+  var uStars = UserStars.findOne({user: user});
+  if (uStars)
+    return uStars.stars;
+
+  UserStars.insert({
+    user: user,
+    stars: []
+  });
+
+  var url = 'https://api.github.com/users/'+user+'/starred';
+  HTTP.get(url, {
+    // Pagination is annoying, and I don't want to parse the link
+    // header on the client. If you have more than 100 stars, some
+    // of them will not be suggested :(
+    params: { per_page: 100 }
+  }, function(err, res) {
+    if (err) {
+      error(err);
+      return;
+    }
+
+    UserStars.update({user: user}, {
+      $set: {
+        stars: res.data.map(function(repo) {
+          return repo.full_name
+        })
+      }
+    });
+  });
+
+  return [];
+}
+
 function getUserRepos(user) {
   user = user.toLowerCase();
 
@@ -11,8 +45,11 @@ function getUserRepos(user) {
     user: user,
     repos: []
   });
+
   var url = 'https://api.github.com/users/'+user+'/repos';
-  HTTP.get(url, function(err, res) {
+  HTTP.get(url, {
+    params: { per_page: 100 }
+  }, function(err, res) {
     if (err) {
       // Don't display an error, the user may not exist
       // or we may have run out of unauthenticated api calls
@@ -47,7 +84,7 @@ AddWatchForm = React.createClass({
     if (query.length === 0)
       return [];
 
-    var display = this.props.user.profile.starred;
+    var display = getUserStars(this.props.user.profile.login);
     var watching = this.state.laggedWatching;
     var queryParts = query.split('/');
 
