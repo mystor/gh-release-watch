@@ -1,5 +1,7 @@
 Package.describe({
-  description: 'later packaged for Meteor'
+  name: 'mystor:later',
+  description: 'later packaged for Meteor',
+  version: '0.1.0'
 });
 
 Npm.depends({

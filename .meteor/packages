@@ -5,6 +5,7 @@
 
 templating  # We need this for the <title> and <meta> tags - may replace at some point
 
+# Core meteor packages
 meteor
 webapp
 logging
@@ -18,11 +19,14 @@ reload
 random
 autoupdate
 accounts-github
-routecore
-bootstrap-3
 service-configuration
 less
-later
 email
-parse-link-header
 http
+
+# Meteorite packages
+mystor:routecore
+mystor:parse-link-header
+mystor:later
+mizzao:bootstrap-3
+

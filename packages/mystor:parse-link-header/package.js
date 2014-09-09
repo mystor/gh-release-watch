@@ -1,5 +1,7 @@
 Package.describe({
-  description: 'parse-link-header packaged for Meteor'
+  name: 'mystor:parse-link-header',
+  description: 'parse-link-header packaged for Meteor',
+  version: '0.1.0'
 });
 
 Npm.depends({
