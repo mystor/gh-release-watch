@@ -7,11 +7,12 @@ You can find GitHub Release Watch online at [http://gh-release-watch.com](http:/
 
 ## Running Locally
 
-GitHub Release Watch is written with [Meteor](http://meteor.com), but it uses some packages from [atmosphere](http://atmosphere.meteor.com).  Thus, you need to use [meteorite](https://github.com/oortcloud/meteorite) to install dependencies.
+GitHub Release Watch is written with [Meteor](http://meteor.com). 
+
 ```bash
 git clone https://github.com/mystor/gh-release-watch.git
 cd gh-release-watch
-mrt
+meteor
 ```
 
 ## FAQ
