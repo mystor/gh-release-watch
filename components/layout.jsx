@@ -43,7 +43,7 @@ Layout = React.createClass({
             <div className="navbar-header">
               <a className="navbar-brand" href={Routes.home()}>
                 <span className="icon-github"></span>
-                Release Watch
+                &nbsp;Release Watch
               </a>
             </div>
           </div>
