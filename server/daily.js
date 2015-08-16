@@ -16,6 +16,9 @@ function checkTags(repo) {
     if (result.statusCode === 304) {
       // console.log('# ' + repo.full_name + ' - 304 Not Modified');
       return []; // The file hasn't changed since last time we looked at it
+    } else if (result.statusCode === 403) {
+      console.warn('-> Rate limited during ' + repo.full_name + ' check until ' + result.headers.x-ratelimit-reset);
+      return [];
     }
 
     var tag_names = result.data.map(function(tag) {
