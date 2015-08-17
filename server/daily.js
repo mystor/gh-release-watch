@@ -84,12 +84,27 @@ function checkTags(repo) {
   return new_tags;
 }
 
+function checkSchema(repo) {
+  if (!(repo.ETag instanceof Array)) {
+    console.log('** Updating schema and restarting ' + repo.full_name);
+    repo.ETag = undefined;
+    Repos.update({ _id: repo._id }, {
+      $set: {
+        fresh: true,
+        ETag: undefined
+      }
+    });
+  }
+}
+
 function checkAllTags() {
   console.log('!! Checking Tags');
   var repos = Repos.find();
   var newTags = {};
 
   repos.forEach(function(repo) {
+    checkSchema(repo);
+
     newTags[repo.full_name] = _.extend(repo, {
       newTags: checkTags(repo)
     });
