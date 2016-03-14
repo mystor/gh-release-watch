@@ -3,7 +3,9 @@ Github Release Watch
 
 GitHub Release Watch (GHRW) makes sure that you always stay up-to-date on new releases of projects you love.  It does this by checking GitHub daily for new tags on your favourite repositories, and sends you an email if there are.
 
-You can find GitHub Release Watch online at [http://gh-release-watch.com](http://gh-release-watch.com).
+~~You can find GitHub Release Watch online at [http://gh-release-watch.com](http://gh-release-watch.com).~~
+
+**GitHub Release Watch will no longer be avaliable as of March 25, 2016.**
 
 ## Running Locally
 
